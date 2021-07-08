@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.Navigation
+import androidx.navigation.fragment.navArgs
 import com.example.dogs.R
 import com.example.dogs.databinding.FragmentDetailBinding
 
@@ -26,7 +27,11 @@ class DetailFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        super.onViewCreated(view,savedInstanceState)
+        val safeArgs : DetailFragmentArgs by navArgs()
+
+        binding.textView2.text = safeArgs.dogUuid.toString()
+
         binding.listFAB.setOnClickListener{
             val action = DetailFragmentDirections.actionDetailFragmentToListFragment()
             Navigation.findNavController(it).navigate(action)
