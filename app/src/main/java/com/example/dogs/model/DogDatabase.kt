@@ -10,7 +10,7 @@ abstract class DogDatabase : RoomDatabase(){
     abstract fun dogDao(): DogDao
 
     companion object {
-        private var instance: DogDatabase? = null
+        @Volatile private var instance: DogDatabase? = null
         private val LOCK = Any()
         operator fun invoke(context: Context): DogDatabase = instance ?: synchronized(LOCK) {
             instance ?: buildDatabase(context).also {
