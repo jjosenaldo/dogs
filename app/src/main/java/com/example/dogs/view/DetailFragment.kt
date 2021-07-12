@@ -29,12 +29,5 @@ class DetailFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view,savedInstanceState)
         val safeArgs : DetailFragmentArgs by navArgs()
-
-        binding.textView2.text = safeArgs.dogUuid.toString()
-
-        binding.listFAB.setOnClickListener{
-            val action = DetailFragmentDirections.actionDetailFragmentToListFragment()
-            Navigation.findNavController(it).navigate(action)
-        }
     }
 }
