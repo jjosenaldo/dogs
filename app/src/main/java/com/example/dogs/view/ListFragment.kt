@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.dogs.databinding.FragmentListBinding
 import com.example.dogs.model.DogBreed
+import com.example.dogs.viewmodel.DetailViewModel
 import com.example.dogs.viewmodel.ListViewModel
 
 class ListFragment : Fragment() {
@@ -29,6 +30,14 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(ListViewModel::class.java)
+
+        binding.swiper.setOnRefreshListener {
+            viewModel.dogs.value = arrayListOf()
+            viewModel.dogsLoadError.value = false
+            viewModel.loading.value = true
+            binding.swiper.isRefreshing = false
+            viewModel.refresh()
+        }
 
         binding.recyclerView.apply {
             layoutManager = LinearLayoutManager(context)

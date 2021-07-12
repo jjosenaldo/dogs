@@ -26,10 +26,10 @@
 
             <TextView
                 android:id="@+id/itemDogName"
-                style="@style/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Dog name" />
+            <!--                style="@style/title"-->
 
             <TextView
                 android:id="@+id/itemDogLifespan"

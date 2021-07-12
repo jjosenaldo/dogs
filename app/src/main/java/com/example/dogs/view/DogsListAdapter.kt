@@ -3,13 +3,18 @@ package com.example.dogs.view
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.Navigation
 import androidx.recyclerview.widget.RecyclerView
 import com.example.dogs.R
 import com.example.dogs.databinding.ItemDogBinding
 import com.example.dogs.model.DogBreed
+import com.example.dogs.viewmodel.DetailViewModel
 
 class DogsListAdapter(private val dogsList : ArrayList<DogBreed>) : RecyclerView.Adapter<DogsListAdapter.DogViewHolder>(){
     class DogViewHolder(val binding : ItemDogBinding) : RecyclerView.ViewHolder(binding.root)
+    var viewModel : DetailViewModel? = null
 
     fun updateDogList(newDogsList:List<DogBreed>){
         dogsList.clear()
@@ -24,8 +29,13 @@ class DogsListAdapter(private val dogsList : ArrayList<DogBreed>) : RecyclerView
     }
 
     override fun onBindViewHolder(holder: DogViewHolder, position: Int) {
-        holder.binding.itemDogLifespan.text = dogsList[position].dogBreed
+        holder.binding.itemDogName.text = dogsList[position].dogBreed
         holder.binding.itemDogLifespan.text = dogsList[position].lifeSpan
+        holder.binding.root.setOnClickListener {
+            val action = ListFragmentDirections.actionListFragmentToDetailFragment()
+            Navigation.findNavController(it).navigate(action)
+            viewModel?.dogBreed?.value = dogsList[position]
+        }
     }
 
     override fun getItemCount(): Int {
