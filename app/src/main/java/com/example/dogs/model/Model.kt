@@ -1,20 +1,39 @@
 package com.example.dogs.model
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
+@Entity
 data class DogBreed(
     @SerializedName("id")
-    val breedId : String?,
+    @ColumnInfo(name = "breed_id")
+    val breedId: String?,
+
     @SerializedName("name")
-    val dogBreed : String?,
+    @ColumnInfo(name = "dog_breed")
+    val dogBreed: String?,
+
     @SerializedName("life_span")
-    val lifeSpan : String?,
+    @ColumnInfo(name = "life_span")
+    val lifeSpan: String?,
+
     @SerializedName("breed_group")
-    val breedGroup : String?,
+    @ColumnInfo(name = "breed_group")
+    val breedGroup: String?,
+
     @SerializedName("bred_for")
-    val bredFor : String?,
+    @ColumnInfo(name = "bred_for")
+    val bredFor: String?,
+
     @SerializedName("temperament")
-    val temperament : String?,
+    val temperament: String?,
+
     @SerializedName("url")
-    val imageUrl : String?
-)
+    @ColumnInfo(name = "image_url")
+    val imageUrl: String?
+) {
+    @PrimaryKey(autoGenerate = true)
+    var uuid : Int = 0
+}
