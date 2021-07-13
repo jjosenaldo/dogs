@@ -51,11 +51,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun notifyDetailFragment(permissionGranted: Boolean) {
-        val activeFragment = supportFragmentManager.findFragmentById(R.id.detailFragment)
-
-        if (activeFragment != null && activeFragment is DetailFragment) {
-            (activeFragment as DetailFragment).onPermissionResult(permissionGranted)
+        val fragments =
+            supportFragmentManager.primaryNavigationFragment?.childFragmentManager?.fragments
+        fragments?.let {
+            if (it.isNotEmpty()) {
+                val activeFragment = it[0]
+                if (activeFragment is DetailFragment) {
+                    activeFragment.onPermissionResult(permissionGranted)
+                }
+            }
         }
+
     }
 
     override fun onRequestPermissionsResult(

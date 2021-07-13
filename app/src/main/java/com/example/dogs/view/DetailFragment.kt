@@ -1,6 +1,9 @@
 package com.example.dogs.view
 
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
+import android.text.Layout
 import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
@@ -9,6 +12,8 @@ import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
 import com.example.dogs.R
 import com.example.dogs.databinding.FragmentDetailBinding
+import com.example.dogs.databinding.SendSmsDialogBinding
+import com.example.dogs.model.SmsInfo
 import com.example.dogs.util.getProgressDrawable
 import com.example.dogs.util.loadImage
 import com.example.dogs.viewmodel.DetailViewModel
@@ -58,7 +63,33 @@ class DetailFragment : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-    fun onPermissionResult(permissionGranted : Boolean){
+    fun onPermissionResult(permissionGranted: Boolean) {
+        if (sendSmsStarted && permissionGranted) {
+            context?.let {
+                val smsInfo = SmsInfo(
+                    "",
+                    "This is my dog: ${viewModel.dogBreed.value?.dogBreed ?: ""}",
+                    viewModel.dogBreed.value?.imageUrl ?: ""
+                )
+                val dialogBinding =
+                    SendSmsDialogBinding.inflate(LayoutInflater.from(it), null, false)
+                dialogBinding.smsInfo = smsInfo
+
+                AlertDialog.Builder(context)
+                    .setView(dialogBinding.root)
+                    .setPositiveButton("Send SMS") { _, _ ->
+                        if (dialogBinding.smsDestination.text != null && dialogBinding.smsDestination.text.isNotEmpty()) {
+                            smsInfo.to = dialogBinding.smsDestination.text.toString()
+                            sendSms(smsInfo)
+                        }
+                    }
+                    .setNegativeButton("Cancel") { _, _ -> }
+                    .show()
+            }
+        }
+    }
+
+    private fun sendSms(smsInfo: SmsInfo) {
 
     }
 
