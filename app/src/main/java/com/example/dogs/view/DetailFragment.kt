@@ -17,6 +17,7 @@ class DetailFragment : Fragment() {
     private var _binding: FragmentDetailBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: DetailViewModel
+    private var sendSmsStarted = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,11 +49,17 @@ class DetailFragment : Fragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.action_send -> {
+                sendSmsStarted = true
+                (activity as MainActivity).checkSmsPermission()
             }
             R.id.action_share -> {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    fun onPermissionResult(permissionGranted : Boolean){
+
     }
 
     private fun observe() {
