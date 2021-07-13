@@ -44,16 +44,13 @@ class DetailFragment : Fragment() {
 
     private fun observe() {
         viewModel.dogBreed.observe(viewLifecycleOwner, { dogBreed ->
-            binding.dogLifespanView.text = dogBreed.lifeSpan ?: "NO LIFESPAN PROVIDED"
-            binding.dogNameView.text = dogBreed.dogBreed ?: "NO DOG BREED PROVIDED"
-            binding.dogPurposeView.text = dogBreed.bredFor ?: "NO PURPOSE PROVIDED"
-            binding.dogTemperamentView.text = dogBreed.temperament ?: "NO TEMPERAMENT PROVIDED"
-            context?.let {
-                binding.dogImageView.loadImage(
-                    dogBreed.imageUrl ?: "",
-                    getProgressDrawable(context!!)
-                )
-            }
+            binding.dog = dogBreed
+//            context?.let {
+//                binding.dogImageView.loadImage(
+//                    dogBreed.imageUrl ?: "",
+//                    getProgressDrawable(context!!)
+//                )
+//            }
         })
 
         viewModel.loading.observe(viewLifecycleOwner, {
