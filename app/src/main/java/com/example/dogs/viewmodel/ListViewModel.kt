@@ -20,7 +20,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     private val dogsService = DogsApiService()
     private val disposable = CompositeDisposable()
     private val preferencesHelper = SharedPreferencesHelper(getApplication())
-    private val refreshTimeSeconds = 10 * 1000 * 1000 * 1000L
+    private val refreshTimeSeconds = 30 * 1000 * 1000 * 1000L
 
     fun refresh() {
         val updateTime = preferencesHelper.getUpdateTime()
@@ -29,6 +29,10 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
         } else {
             fetchFromDatabase()
         }
+    }
+
+    fun refreshBypassCache(){
+        fetchFromRemote()
     }
 
     private fun fetchFromDatabase() {

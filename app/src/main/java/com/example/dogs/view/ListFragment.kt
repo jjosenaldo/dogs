@@ -36,7 +36,7 @@ class ListFragment : Fragment() {
             viewModel.dogsLoadError.value = false
             viewModel.loading.value = true
             binding.swiper.isRefreshing = false
-            viewModel.refresh()
+            viewModel.refreshBypassCache()
         }
 
         binding.recyclerView.apply {
