@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import com.example.dogs.model.DogBreed
 import com.example.dogs.model.DogDatabase
 import com.example.dogs.model.DogsApiService
+import com.example.dogs.util.NotificationsHelper
 import com.example.dogs.util.SharedPreferencesHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
@@ -53,6 +54,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
                 .subscribeWith(object : DisposableSingleObserver<List<DogBreed>>() {
                     override fun onSuccess(dogsList: List<DogBreed>) {
                         Toast.makeText(getApplication(), "Fetch from network", Toast.LENGTH_SHORT).show()
+                        NotificationsHelper(getApplication()).createNotification()
                         storeDogsLocally(dogsList)
                     }
 
