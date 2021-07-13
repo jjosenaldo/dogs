@@ -1,10 +1,8 @@
 package com.example.dogs.view
 
 import android.os.Bundle
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
 import androidx.navigation.Navigation
@@ -28,6 +26,7 @@ class DetailFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         _binding = FragmentDetailBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -39,18 +38,26 @@ class DetailFragment : Fragment() {
 
         val args: DetailFragmentArgs by navArgs()
         viewModel.fetchDogFromDatabaseByUuid(args.dogUuid.toLong())
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.detail_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.action_send -> {
+            }
+            R.id.action_share -> {
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun observe() {
         viewModel.dogBreed.observe(viewLifecycleOwner, { dogBreed ->
             binding.dog = dogBreed
-//            context?.let {
-//                binding.dogImageView.loadImage(
-//                    dogBreed.imageUrl ?: "",
-//                    getProgressDrawable(context!!)
-//                )
-//            }
         })
 
         viewModel.loading.observe(viewLifecycleOwner, {
