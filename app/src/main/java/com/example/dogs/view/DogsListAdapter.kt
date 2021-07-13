@@ -14,10 +14,8 @@ import com.example.dogs.util.getProgressDrawable
 import com.example.dogs.util.loadImage
 import com.example.dogs.viewmodel.DetailViewModel
 
-class DogsListAdapter(private val dogsList : ArrayList<DogBreed>) : RecyclerView.Adapter<DogsListAdapter.DogViewHolder>(){
+class DogsListAdapter(private val dogsList : ArrayList<DogBreed>) : RecyclerView.Adapter<DogsListAdapter.DogViewHolder>() , DogClickListener{
     class DogViewHolder(val binding : ItemDogBinding) : RecyclerView.ViewHolder(binding.root)
-
-    var viewModel : DetailViewModel? = null
 
     fun updateDogList(newDogsList:List<DogBreed>){
         dogsList.clear()
@@ -33,18 +31,16 @@ class DogsListAdapter(private val dogsList : ArrayList<DogBreed>) : RecyclerView
 
     override fun onBindViewHolder(holder: DogViewHolder, position: Int) {
         holder.binding.dog = dogsList[position]
-//        holder.binding.itemDogName.text = dogsList[position].dogBreed
-//        holder.binding.itemDogLifespan.text = dogsList[position].lifeSpan
-//        holder.binding.dogImage.loadImage(dogsList[position].imageUrl ?: "", getProgressDrawable(holder.binding.dogImage.context))
-//        holder.binding.root.setOnClickListener {
-//            val action = ListFragmentDirections.actionListFragmentToDetailFragment(dogsList[position].uuid)
-//            Navigation.findNavController(it).navigate(action)
-//            viewModel?.dogBreed?.value = dogsList[position]
-//        }
+        holder.binding.listener = this
     }
 
     override fun getItemCount(): Int {
         return dogsList.size
+    }
+
+    override fun onDogClicked(view: View, dog : DogBreed) {
+        val action = ListFragmentDirections.actionListFragmentToDetailFragment(dog.uuid)
+        Navigation.findNavController(view).navigate(action)
     }
 
 }
