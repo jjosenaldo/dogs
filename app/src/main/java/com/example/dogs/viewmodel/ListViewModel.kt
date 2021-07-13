@@ -1,10 +1,12 @@
 package com.example.dogs.viewmodel
 
 import android.app.Application
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.example.dogs.model.DogBreed
 import com.example.dogs.model.DogDatabase
 import com.example.dogs.model.DogsApiService
+import com.example.dogs.util.SharedPreferencesHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
@@ -17,9 +19,25 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     val loading = MutableLiveData<Boolean>()
     private val dogsService = DogsApiService()
     private val disposable = CompositeDisposable()
+    private val preferencesHelper = SharedPreferencesHelper(getApplication())
+    private val refreshTimeSeconds = 10 * 1000 * 1000 * 1000L
 
     fun refresh() {
-        fetchFromRemote()
+        val updateTime = preferencesHelper.getUpdateTime()
+        if (updateTime == 0L || System.nanoTime() - updateTime > refreshTimeSeconds) {
+            fetchFromRemote()
+        } else {
+            fetchFromDatabase()
+        }
+    }
+
+    private fun fetchFromDatabase() {
+        loading.value = true
+        launch {
+            val dogsList = DogDatabase(getApplication()).dogDao().getAllDogs()
+            onDogsRetrieved(dogsList)
+            Toast.makeText(getApplication(), "Fetch from database", Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun fetchFromRemote() {
@@ -30,6 +48,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<DogBreed>>() {
                     override fun onSuccess(dogsList: List<DogBreed>) {
+                        Toast.makeText(getApplication(), "Fetch from network", Toast.LENGTH_SHORT).show()
                         storeDogsLocally(dogsList)
                     }
 
@@ -52,6 +71,7 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
             }
             onDogsRetrieved(dogsList)
         }
+        preferencesHelper.saveUpdateTime(System.nanoTime())
     }
 
     private fun onDogsRetrieved(dogsList: List<DogBreed>) {
