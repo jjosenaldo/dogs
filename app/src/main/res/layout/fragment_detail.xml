@@ -12,8 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:minHeight="200dp"
-            android:src="@mipmap/ic_dog" />
+            android:minHeight="200dp"/>
 
         <TextView
             android:id="@+id/dogNameView"
