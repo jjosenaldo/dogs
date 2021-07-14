@@ -1,8 +1,11 @@
 package com.example.dogs.view
 
 import android.app.AlertDialog
+import android.app.PendingIntent
 import android.content.DialogInterface
+import android.content.Intent
 import android.os.Bundle
+import android.telephony.SmsManager
 import android.text.Layout
 import android.view.*
 import androidx.fragment.app.Fragment
@@ -90,6 +93,10 @@ class DetailFragment : Fragment() {
     }
 
     private fun sendSms(smsInfo: SmsInfo) {
+        val intent = Intent(context, MainActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+        val smsManager = SmsManager.getDefault()
+        smsManager.sendTextMessage(smsInfo.to, null, smsInfo.text, pendingIntent, null)
 
     }
 
