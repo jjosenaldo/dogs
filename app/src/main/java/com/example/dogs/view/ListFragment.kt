@@ -1,15 +1,14 @@
 package com.example.dogs.view
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProviders
+import androidx.navigation.NavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.dogs.R
 import com.example.dogs.databinding.FragmentListBinding
-import com.example.dogs.model.DogBreed
-import com.example.dogs.viewmodel.DetailViewModel
 import com.example.dogs.viewmodel.ListViewModel
 
 class ListFragment : Fragment() {
@@ -19,11 +18,25 @@ class ListFragment : Fragment() {
     private val dogsAdapter: DogsListAdapter =
         DogsListAdapter(arrayListOf())
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.list_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.actionSettings -> view?.let { findNavController().navigate(ListFragmentDirections.actionListFragmentToSettingsFragment()) }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentListBinding.inflate(inflater, container, false)
+        setHasOptionsMenu(true)
         return binding.root
     }
 

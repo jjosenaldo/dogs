@@ -13,6 +13,7 @@ import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableSingleObserver
 import io.reactivex.schedulers.Schedulers.newThread
 import kotlinx.coroutines.launch
+import java.lang.NumberFormatException
 
 class ListViewModel(application: Application) : BaseViewModel(application) {
     val dogs = MutableLiveData<List<DogBreed>>()
@@ -21,9 +22,11 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     private val dogsService = DogsApiService()
     private val disposable = CompositeDisposable()
     private val preferencesHelper = SharedPreferencesHelper(getApplication())
-    private val refreshTimeSeconds = 30 * 1000 * 1000 * 1000L
+    private var refreshTimeSeconds: Long = DEFAULT_SECONDS * SECONDS_MULTIPLIER
 
     fun refresh() {
+        checkCacheDuration()
+
         val updateTime = preferencesHelper.getUpdateTime()
         if (updateTime == 0L || System.nanoTime() - updateTime > refreshTimeSeconds) {
             fetchFromRemote()
@@ -32,9 +35,19 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
         }
     }
 
-    fun refreshBypassCache(){
+    fun refreshBypassCache() {
         fetchFromRemote()
     }
+
+    private fun checkCacheDuration() {
+        try {
+            refreshTimeSeconds = (preferencesHelper.getCacheDurationInSeconds()?.toInt()
+                ?: DEFAULT_SECONDS) * SECONDS_MULTIPLIER
+        } catch (e: NumberFormatException) {
+            e.printStackTrace()
+        }
+    }
+
 
     private fun fetchFromDatabase() {
         loading.value = true
@@ -53,7 +66,8 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableSingleObserver<List<DogBreed>>() {
                     override fun onSuccess(dogsList: List<DogBreed>) {
-                        Toast.makeText(getApplication(), "Fetch from network", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(getApplication(), "Fetch from network", Toast.LENGTH_SHORT)
+                            .show()
                         NotificationsHelper(getApplication()).createNotification()
                         storeDogsLocally(dogsList)
                     }
@@ -89,5 +103,10 @@ class ListViewModel(application: Application) : BaseViewModel(application) {
     override fun onCleared() {
         super.onCleared()
         disposable.dispose()
+    }
+
+    companion object {
+        private const val SECONDS_MULTIPLIER = 1000 * 1000 * 1000L
+        private const val DEFAULT_SECONDS = 30
     }
 }

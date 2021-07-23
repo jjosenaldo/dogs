@@ -9,6 +9,7 @@ class SharedPreferencesHelper {
     companion object {
         private const val PREFS_TIME_KEY = "time"
         private var prefs: SharedPreferences? = null
+
         @Volatile
         private var instance: SharedPreferencesHelper? = null
         private val LOCK = Any()
@@ -31,5 +32,8 @@ class SharedPreferencesHelper {
         }
     }
 
-    fun getUpdateTime() : Long = prefs?.getLong(PREFS_TIME_KEY, 0) ?: 0
+    fun getUpdateTime(): Long = prefs?.getLong(PREFS_TIME_KEY, 0) ?: 0
+
+    // It is stored in a String... https://stackoverflow.com/a/17844777/13874413
+    fun getCacheDurationInSeconds(): String? =  prefs?.getString("pref_cache_duration", "")
 }
