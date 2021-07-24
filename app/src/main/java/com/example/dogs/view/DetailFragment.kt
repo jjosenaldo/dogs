@@ -4,6 +4,8 @@ import android.app.AlertDialog
 import android.app.PendingIntent
 import android.content.DialogInterface
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.telephony.SmsManager
 import android.text.Layout
@@ -13,9 +15,14 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.lifecycle.get
 import androidx.navigation.Navigation
 import androidx.navigation.fragment.navArgs
+import androidx.palette.graphics.Palette
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.example.dogs.R
 import com.example.dogs.databinding.FragmentDetailBinding
 import com.example.dogs.databinding.SendSmsDialogBinding
+import com.example.dogs.model.DogPalette
 import com.example.dogs.model.SmsInfo
 import com.example.dogs.util.getProgressDrawable
 import com.example.dogs.util.loadImage
@@ -64,7 +71,10 @@ class DetailFragment : Fragment() {
                 val intent = Intent(Intent.ACTION_SEND)
                 intent.type = "text/plain"
                 intent.putExtra(Intent.EXTRA_SUBJECT, "This is something dogful")
-                intent.putExtra(Intent.EXTRA_TEXT, "Dogs of ${viewModel.dogBreed.value?.dogBreed} are nice")
+                intent.putExtra(
+                    Intent.EXTRA_TEXT,
+                    "Dogs of ${viewModel.dogBreed.value?.dogBreed} are nice"
+                )
                 intent.putExtra(Intent.EXTRA_STREAM, viewModel.dogBreed.value?.imageUrl)
                 startActivity(Intent.createChooser(intent, "Share withh"))
             }
@@ -109,11 +119,27 @@ class DetailFragment : Fragment() {
     private fun observe() {
         viewModel.dogBreed.observe(viewLifecycleOwner, { dogBreed ->
             binding.dog = dogBreed
+            setupBackgroundColor(dogBreed.imageUrl)
         })
 
         viewModel.loading.observe(viewLifecycleOwner, {
             binding.dogNameView.text = if (!it) viewModel.dogBreed.value?.dogBreed
                 ?: "NO DOG BREED PROVIDED" else "Loading..."
         })
+    }
+
+    private fun setupBackgroundColor(imageUrl: String?) {
+        imageUrl?.let {
+            Glide.with(this).asBitmap().load(imageUrl).into(object : CustomTarget<Bitmap>() {
+                override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                    val palette = Palette.from(resource).generate()
+                    val intColor = palette.getVibrantColor(0)
+                    binding.palette = DogPalette(intColor)
+                }
+
+                override fun onLoadCleared(placeholder: Drawable?) {
+                }
+            })
+        }
     }
 }
